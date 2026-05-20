@@ -4,6 +4,10 @@
 
 Freerouter fetches all free models from OpenRouter, scores them with a weighted algorithm, runs health-checks, and updates your Hermes Agent config. Set it up once and forget it — a daily cron job keeps your models current.
 
+## Who Is This For?
+
+You want to run a Hermes Agent but you don't want to pay for cloud models. You want the best **free** models available — without manually tracking which ones are up, which ones are down, and which ones got replaced. Freerouter does that for you.
+
 ## Why?
 
 OpenRouter adds, removes, and changes free models every day. Manually tracking which models are available, testing which ones work, and updating your config is tedious. Freerouter automates all of it so your Hermes Agent always runs on the best free models available.
