@@ -1,0 +1,62 @@
+# Hermes Agent config.yaml — Minimal Template für OpenRouter
+# Kopiere diese Datei nach ~/.hermes/config.yaml und passe sie an.
+# Volle Dokumentation: https://hermes-agent.nousresearch.com/docs/user-guide/configuration
+
+model:
+  default: openrouter/owl-alpha    # Wird vom Model Updater automatisch aktualisiert
+  provider: openrouter
+  base_url: ''                     # Muss '' sein für OpenRouter (wird vom Script gesetzt)
+
+providers: {}
+fallback_providers: []
+
+agent:
+  max_turns: 90
+  tool_use_enforcement: auto
+
+terminal:
+  backend: local
+  cwd: .
+  timeout: 180
+
+compression:
+  enabled: true
+  threshold: 0.5
+  target_ratio: 0.2
+
+openrouter:
+  response_cache: true
+  response_cache_ttl: 300
+  min_coding_score: 0.65
+
+# Auxiliary Models — werden vom Model Updater gepatcht
+auxiliary:
+  vision:
+    provider: openrouter
+    model: openrouter/owl-alpha    # Wird vom Script aktualisiert
+    base_url: ''                   # Muss '' sein für OpenRouter
+    api_key: sk-or-...XXXX         # Wird vom Script aus .env gesetzt
+    timeout: 120
+  web_extract:
+    provider: auto
+  compression:
+    provider: auto
+  session_search:
+    provider: auto
+
+delegation:
+  model: openrouter/owl-alpha      # Wird vom Script aktualisiert
+  provider: openrouter
+  base_url: ''
+  max_iterations: 50
+  max_concurrent_children: 3
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+
+cron:
+  wrap_response: true
+
+security:
+  redact_secrets: true
