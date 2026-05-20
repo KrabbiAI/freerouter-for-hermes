@@ -1,6 +1,6 @@
 #!/bin/bash
-# OpenRouter Model Updater — Installer
-# Führt dieses Script aus: bash install.sh
+# Freerouter for Hermes — Installer
+# Run this script: bash install.sh
 
 set -euo pipefail
 
@@ -9,7 +9,7 @@ SCRIPT_DIR="$HERMES_HOME/scripts"
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "============================================"
-echo "  OpenRouter Model Updater — Installation"
+echo "  Freerouter for Hermes — Installation"
 echo "============================================"
 echo ""
 
@@ -47,9 +47,9 @@ echo "✅ Config: $HERMES_HOME/config.yaml"
 
 # 5. Kopiere Script
 mkdir -p "$SCRIPT_DIR"
-cp "$REPO_DIR/scripts/openrouter_model_updater.py" "$SCRIPT_DIR/"
-chmod +x "$SCRIPT_DIR/openrouter_model_updater.py"
-echo "✅ Script installiert: $SCRIPT_DIR/openrouter_model_updater.py"
+cp "$REPO_DIR/scripts/openrouter_model_updater.py" "$SCRIPT_DIR/freerouter.py"
+chmod +x "$SCRIPT_DIR/freerouter.py"
+echo "✅ Script installiert: $SCRIPT_DIR/freerouter.py"
 
 # 6. Testlauf (Dry-Run)
 echo ""
@@ -57,7 +57,7 @@ echo "============================================"
 echo "  Testlauf (Dry-Run)..."
 echo "============================================"
 cd "$HERMES_HOME"
-DRY_RUN=true python3 "$SCRIPT_DIR/openrouter_model_updater.py" 2>&1 || {
+DRY_RUN=true python3 "$SCRIPT_DIR/freerouter.py" 2>&1 || {
     echo "❌ Testlauf fehlgeschlagen — prüfe die Konfiguration"
     exit 1
 }
@@ -70,18 +70,18 @@ echo ""
 echo "Nächste Schritte:"
 echo ""
 echo "  1. Testlauf (Dry-Run):"
-echo "     DRY_RUN=true python3 $SCRIPT_DIR/openrouter_model_updater.py"
+echo "     DRY_RUN=true python3 $SCRIPT_DIR/freerouter.py"
 echo ""
 echo "  2. Live-Run (ohne Dry-Run):"
-echo "     DRY_RUN=false python3 $SCRIPT_DIR/openrouter_model_updater.py"
+echo "     DRY_RUN=false python3 $SCRIPT_DIR/freerouter.py"
 echo ""
 echo "  3. Cron-Job einrichten (täglich um 06:00):"
 echo "     hermes cron create '0 6 * * *' \\"
-echo "       --prompt 'Führe das OpenRouter Model Updater Script aus (OHNE Dry-Run). Das Script: $SCRIPT_DIR/openrouter_model_updater.py' \\"
-echo "       --name 'OpenRouter Model Updater' \\"
+echo "       --prompt 'Run Freerouter (live mode). Script: $SCRIPT_DIR/freerouter.py. Set DRY_RUN=false.' \\"
+echo "       --name 'Freerouter' \\"
 echo "       --toolsets terminal"
 echo ""
 echo "  4. ODER: Cron-Job manuell hinzufügen:"
 echo "     crontab -e"
-echo "     0 6 * * * cd $HERMES_HOME && DRY_RUN=false HERMES_HOME=$HERMES_HOME python3 $SCRIPT_DIR/openrouter_model_updater.py >> $HERMES_HOME/logs/model_updater_cron.log 2>&1"
+echo "     0 6 * * * cd $HERMES_HOME && DRY_RUN=false HERMES_HOME=$HERMES_HOME python3 $SCRIPT_DIR/freerouter.py >> $HERMES_HOME/logs/freerouter_cron.log 2>&1"
 echo ""

@@ -1,4 +1,4 @@
-# 🔄 OpenRouter Free Model Updater
+# 🔄 Freerouter for Hermes
 
 > **Automated model selection for [Hermes Agent](https://github.com/NousResearch/hermes-agent)**
 > Fetches all free models from OpenRouter, scores them with a weighted algorithm, runs health-checks, and updates your config — fully automated via cron.
@@ -20,7 +20,7 @@
 
 ## What It Does
 
-Every day, OpenRouter adds, removes, or changes free models. This tool:
+Every day, OpenRouter adds, removes, or changes free models. Freerouter:
 
 1. **Fetches** all current free models from the OpenRouter API
 2. **Scores** each model using a weighted multi-dimensional algorithm
@@ -43,7 +43,6 @@ Before installing, make sure you have:
 | [OpenRouter API Key](https://openrouter.ai/keys) | Sign up free at openrouter.ai → Keys | ✅ Yes |
 | [Telegram Bot Token](https://t.me/BotFather) | Message @BotFather → `/newbot` | ❌ Optional |
 | Python 3.10+ | Usually pre-installed on Linux | ✅ Yes |
-| `gh` CLI (for repo setup) | `gh auth login` | ❌ Optional |
 
 ### Verify Hermes Agent is installed
 
@@ -61,7 +60,7 @@ ls ~/.hermes/
 ```bash
 # Test the key directly:
 curl -s -o /dev/null -w "%{http_code}" \
-  -H "Authorization: Bearer sk-or-v1-YOUR_KEY" \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
   "https://openrouter.ai/api/v1/models?free=true&limit=1"
 # Should return: 200
 ```
@@ -74,8 +73,8 @@ curl -s -o /dev/null -w "%{http_code}" \
 
 ```bash
 cd ~/workspace
-git clone https://github.com/KrabbiAI/openrouter-model-updater.git
-cd openrouter-model-updater
+git clone https://github.com/KrabbiAI/freerouter-for-hermes.git
+cd freerouter-for-hermes
 ```
 
 ### Step 2: Run the Installer
@@ -88,7 +87,7 @@ The installer will:
 1. Verify Hermes Agent is installed
 2. Check that your `.env` file exists
 3. Verify your OpenRouter API key is set
-4. Copy the updater script to `~/.hermes/scripts/`
+4. Copy the Freerouter script to `~/.hermes/scripts/`
 5. Run a test (dry-run) to confirm everything works
 
 ### Step 3: Set Your API Key (if not already set)
@@ -100,7 +99,7 @@ nano ~/.hermes/.env
 Find this line and replace `YOUR_KEY_HERE` with your actual key:
 
 ```bash
-OPENROUTER_API_KEY=sk-or-v1-YOUR_ACTUAL_KEY_HERE
+OPENROUTER_API_KEY=sk-or-v1-YOUR_KEY_HERE
 ```
 
 Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X`).
@@ -109,22 +108,22 @@ Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X`).
 
 ```bash
 # Dry run (no changes to config)
-DRY_RUN=true python3 ~/.hermes/scripts/openrouter_model_updater.py
+DRY_RUN=true python3 ~/.hermes/scripts/freerouter.py
 
 # Live run (actually updates config)
-DRY_RUN=false python3 ~/.hermes/scripts/openrouter_model_updater.py
+DRY_RUN=false python3 ~/.hermes/scripts/freerouter.py
 ```
 
 ### Step 5: Set Up the Daily Cron Job
 
 ```bash
 hermes cron create '0 6 * * *' \
-  --prompt 'Run the OpenRouter Model Updater (live mode, not dry-run). Script: ~/.hermes/scripts/openrouter_model_updater.py. Environment: DRY_RUN=false.' \
-  --name 'OpenRouter Model Updater' \
+  --prompt 'Run Freerouter (live mode). Script: ~/.hermes/scripts/freerouter.py. Set DRY_RUN=false.' \
+  --name 'Freerouter' \
   --toolsets terminal
 ```
 
-That's it. The updater runs every day at 06:00 and keeps your models current.
+That's it. Freerouter runs every day at 06:00 and keeps your models current.
 
 ---
 
@@ -165,7 +164,7 @@ That's it. The updater runs every day at 06:00 and keeps your models current.
 
 ### Idempotent by Design
 
-The updater **only changes your config when models actually shift**. If the top models are the same as yesterday, nothing is written and no restart happens. This means:
+Freerouter **only changes your config when models actually shift**. If the top models are the same as yesterday, nothing is written and no restart happens. This means:
 
 - Safe to run multiple times per day
 - No unnecessary gateway restarts
@@ -179,7 +178,7 @@ Models that fail health-checks are tracked in `~/.hermes/.model_failures.json`:
 - **3 failures**: Model is **banned for 24 hours**
 - **After 24h**: Ban expires, failure count resets
 
-This prevents the updater from repeatedly trying broken models.
+This prevents Freerouter from repeatedly trying broken models.
 
 ### Fallback Chains
 
@@ -251,7 +250,7 @@ Set these in `~/.hermes/.env`:
 
 ### Config File Changes
 
-The updater modifies these sections in `~/.hermes/config.yaml`:
+Freerouter modifies these sections in `~/.hermes/config.yaml`:
 
 ```yaml
 model:
@@ -270,7 +269,7 @@ delegation:
   model: openrouter/owl-alpha            # ← Updated to best main model
 ```
 
-**Important**: The updater sets `base_url: ''` for all OpenRouter providers. This is required — OpenRouter handles routing internally.
+**Important**: Freerouter sets `base_url: ''` for all OpenRouter providers. This is required — OpenRouter handles routing internally.
 
 ### What Gets Patched
 
@@ -294,8 +293,8 @@ This creates a managed cron job inside Hermes:
 
 ```bash
 hermes cron create '0 6 * * *' \
-  --prompt 'Run the OpenRouter Model Updater (live mode). Script: ~/.hermes/scripts/openrouter_model_updater.py. Set DRY_RUN=false before running.' \
-  --name 'OpenRouter Model Updater' \
+  --prompt 'Run Freerouter (live mode). Script: ~/.hermes/scripts/freerouter.py. Set DRY_RUN=false.' \
+  --name 'Freerouter' \
   --toolsets terminal \
   --deliver telegram
 ```
@@ -316,7 +315,7 @@ crontab -e
 Add this line:
 
 ```cron
-0 6 * * * cd /home/YOUR_USER/.hermes && DRY_RUN=false HERMES_HOME=/home/YOUR_USER/.hermes python3 scripts/openrouter_model_updater.py >> logs/model_updater_cron.log 2>&1
+0 6 * * * cd /home/YOUR_USER/.hermes && DRY_RUN=false HERMES_HOME=/home/YOUR_USER/.hermes python3 scripts/freerouter.py >> logs/freerouter_cron.log 2>&1
 ```
 
 Replace `/home/YOUR_USER` with your actual home path.
@@ -336,7 +335,7 @@ Replace `/home/YOUR_USER` with your actual home path.
 # List Hermes cron jobs
 hermes cron list
 
-# Check the updater log
+# Check the Freerouter log
 tail -50 ~/.hermes/logs/model_updater.log
 
 # Check the last selection
@@ -355,7 +354,7 @@ cat ~/.hermes/.model_selection.json | python3 -m json.tool | head -30
 ```bash
 nano ~/.hermes/.env
 # Add or fix this line:
-OPENROUTER_API_KEY=sk-or-v1-your-actual-key-here
+OPENROUTER_API_KEY=sk-or-v1-...
 ```
 
 **Verify**:
@@ -419,14 +418,14 @@ TELEGRAM_CHAT_ID=123456789
 **Fix**:
 ```bash
 # For one-time live run:
-DRY_RUN=false python3 ~/.hermes/scripts/openrouter_model_updater.py
+DRY_RUN=false python3 ~/.hermes/scripts/freerouter.py
 
 # For cron: make sure the prompt sets DRY_RUN=false
 ```
 
 ### "Model changed but config looks the same"
 
-**Cause**: The updater only patches specific lines. If your config has a non-standard format, the regex might not match.
+**Cause**: Freerouter only patches specific lines. If your config has a non-standard format, the regex might not match.
 
 **Fix**: Check the log for patching details:
 ```bash
@@ -438,9 +437,9 @@ grep "Patched\|patching\|base_url" ~/.hermes/logs/model_updater.log | tail -20
 ## File Structure
 
 ```
-openrouter-model-updater/
+freerouter-for-hermes/
 ├── scripts/
-│   └── openrouter_model_updater.py       # Main updater script (V3)
+│   └── freerouter.py                     # Main script (V3)
 ├── templates/
 │   ├── .env.template                     # Template for ~/.hermes/.env
 │   └── config.yaml.template              # Minimal config.yaml template
@@ -469,10 +468,10 @@ MIT — Use freely, modify as you wish. No warranty.
 
 ## Contributing
 
-This tool is designed for Hermes Agent. If you adapt it for other agents:
+Freerouter is designed for Hermes Agent. If you adapt it for other agents:
 
 - The scoring algorithm is model-agnostic
 - The config patching is Hermes-specific (regex-based YAML editing)
 - The OpenRouter API calls are standard REST
 
-Pull requests welcome at https://github.com/KrabbiAI/openrouter-model-updater
+Pull requests welcome at https://github.com/KrabbiAI/freerouter-for-hermes

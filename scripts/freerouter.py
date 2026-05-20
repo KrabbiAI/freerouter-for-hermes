@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-OpenRouter Free Model Updater for Hermes Agent
-==============================================
+Freerouter for Hermes — OpenRouter Free Model Updater
+=====================================================
 V3 — Weighted Scoring + Health-Check + Fallback-Chain
 
 Requirements:
@@ -11,8 +11,8 @@ Requirements:
   - Telegram Bot Token (optional, for notifications)
 
 Usage:
-  DRY_RUN=true  python3 openrouter_model_updater.py   # Test run
-  DRY_RUN=false python3 openrouter_model_updater.py   # Live run (updates config)
+  DRY_RUN=true  python3 freerouter.py   # Test run
+  DRY_RUN=false python3 freerouter.py   # Live run (updates config)
 """
 
 import os
@@ -34,7 +34,7 @@ CONFIG_BACKUP = HERMES_HOME / "config.yaml.bak"
 SELECTION_FILE = HERMES_HOME / ".model_selection.json"
 HISTORY_FILE = HERMES_HOME / ".model_history.json"
 FAILURES_FILE = HERMES_HOME / ".model_failures.json"
-LOG_FILE = HERMES_HOME / "logs" / "model_updater.log"
+LOG_FILE = HERMES_HOME / "logs" / "freerouter.log"
 
 DRY_RUN = os.environ.get("DRY_RUN", "true").lower() == "true"
 
