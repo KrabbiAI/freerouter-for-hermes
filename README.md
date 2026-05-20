@@ -21,6 +21,33 @@ OpenRouter adds, removes, and changes free models every day. Manually tracking w
 5. **Notifies** you via Telegram (optional)
 6. **Restarts** the Hermes Gateway (only when models actually changed)
 
+### Example Telegram Notification
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━
+🌅 OpenRouter Model Update
+📅 20.05.2026 — 06:00
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+🖥️ MAIN MODEL
+   `openrouter/owl-alpha`
+   Context: 1M | Score: 86
+   ↳ Fallback: `deepseek/deepseek-v4-flash:free`, `qwen/qwen3-coder:free`
+
+🖼️ VISION
+   `openrouter/owl-alpha`
+   Context: 1M | Score: 86
+
+🧠 REASONING
+   `openrouter/owl-alpha`
+   Context: 1M | Score: 86
+
+📊 Changes: 0
+━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+When models change, you'll see what changed and what the fallback chain is. When nothing changed, you get a quick 0-changes confirmation.
+
 ## Quick Start
 
 ### Prerequisites
